@@ -1,0 +1,109 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{enumerate}
+
+\title{Manual de Instalación BRAMS 5.2}
+\author{Dominguez Vidal, Elvis - Taniguchi Lock, Sonny}
+\begin{document}
+
+\maketitle
+\section{Introducción}
+Esta página lo guiará para instalar la infraestructura de software y el modelo BRAMS. El código BRAMS se distribuye bajo la Licencia CC-GPL. Puede descargar, copiar, modificar y redistribuir el código. Algunos derechos están reservados. Recomendamos al usuario que lea los términos de la licencia en el sitio Creative Commons .
+
+BRAMS funciona con sistemas operativos Linux o Unix. Como primer enfoque, recomendamos la distribución de Linux UBUNTU .
+
+Lea atentamente cada uno de los pasos a continuación para instalar y ejecutar el modelo.
+
+\section{Instalar Compiladores Fortran y C}
+BRAMS ha sido probado con los compiladores: compiladores INTEL® , compiladores PGI® y compilador Fortran de GNU (GPL). Siga las instrucciones de cada sitio para instalar los compiladores.
+
+\section{Instalar Bibliotecas MPI y SOFTWARE}
+BRAMS solo funciona en modo paralelo. Se puede ejecutar el modelo usando un único procesador / núcleo, pero debe hacerlo usando MPI con el comando MPIRUN. Recomendamos descargar e instalar la última versión de la versión estable de MPICH . La última versión de trabajo es 3.1.4. Puede tener problemas con las nuevas versiones, como la versión 3.2. También tenga cuidado de elegir la versión correcta para su sistema operativo .
+
+Después de descargar el MPICH, proceda con la instalación: 
+
+\begin{itemize}
+\item Descomprimir: \textasciitilde \textbackslash{} tar -zxvf mpich-3.1.4.tar.gz
+ \item Ir al directorio mpich: \textasciitilde \textbackslash{} cd mpich-3.1.4
+ \item Configurar mpich makefile  \textbackslash{}configure -disable-fast CFLAGS = -O2 FFLAGS = -O2 CXXFLAGS = -O2 FCFLAGS = -O2 -prefix = \textbackslash{} opt \textbackslash{}mpich3 CC=gcc FC=gfortran F77=gfortran
+ \item hacer e instalar: \textbackslash{}make; \textbackslash{}sudo make install
+ 
+ Notas:
+\begin{enumerate}[1.]
+\item -prefix = directorio donde mpich se instalará cuando hagas el comando de instalación;
+\item CC = Compilador C según lo instale en el paso (2) anterior;
+\item FC = compilador Fortran según lo instale en el paso (2) anterior;
+\item F77 = Use lo mismo que FC
+
+\end{enumerate}
+ 
+ 
+
+\end{itemize}
+\section{Descargue y compile el modelo BRAMS}
+Para descargar BRAMS, debe completar un formulario con su identificación. Luego debe hacer clic en "Enviar correo electrónico de activación" en la parte inferior de la página. Recibirá un correo electrónico con un número de código de activación alfanumérico. Ingrese con el código en la casilla y se le enviará otro correo electrónico con instrucciones de descarga.
+
+\begin{enumerate}[1.]
+\item -prefix = directorio donde se instalará BRAMS cuando se realiza el comando de instalación;
+\item -with-chem = El químico que se utilizará (RELACS\_ TUV, RELACS\_ MX, CB07\_ LUT, CB07\_ TUV, RACM\_ TUV)
+\item -with-aer = mecanismo de aerosol (SIMPLE o MATRIX (bajo prueba))
+\item -with-fpcomp = y -with-cpcomp = compilador paralelo mpich instalado en el paso 3 anterior.
+\item -with-fcomp = y -with-ccomp = compilador instalado en el paso 2 anterior.
+
+
+\end{enumerate}
+Después de descargar el código, la instalación del código BRAMS es la siguiente:
+
+\begin{enumerate}
+\item extraer archivos:  \textbackslash{} tar -zxvf brams-5.2.5-src.tgz
+\item ir al directorio de compilación:  \textbackslash{} cd BRAMS / build /
+\item ./configure - program - prefix=BRAMS - prefix=/home/xuser - enable - jules - with - chem=RELACS\_ TUV -with - aer=SIMPLE - with - fpcomp=/opt/mpich3/bin/mpif90 - with - cpcomp=/opt/mpich3/bin/ mpicc -with-fcomp=gfortran -with-ccomp=gcc
+\end{enumerate}
+
+\section{Ejecute el modelo BRAMS}
+Antes de ejecutar el modelo, debe obtener los datos de entrada. Hay dos paquetes para las pruebas iniciales:
+
+\begin{enumerate}[a)]
+\item  Pequeño maletín meteorológico para computadoras portátiles y de escritorio (722MB)
+\item Estuche químico pequeño (usando RELACS TUV) para computadoras portátiles y de escritorio (945 MB)
+
+\end{enumerate}
+Ambos casos son solo para pruebas y procesos de aprendizaje. Para obtener datos de ejecuciones diferentes, visite la página Datos de entrada.
+
+\begin{itemize}
+\item Después de descargar un caso de prueba, descomprímalo con el comando "tar":  tar -zxvf meteo-only.tgz
+\item Vaya al directorio de prueba:  cd meteo-only
+\item Cree un directorio tmp (necesario para Jules):  mkdir .\textbackslash{} tmp
+\item Exporte el directorio tmp ( especialmente si ejecuta NOT localmente ):  export TMPDIR =. .\textbackslash{} Tmp
+\item Tenga cuidado con el tamaño de pila de su máquina. Hazlo al menos 65536 o ilimitado:  ulimit -s 65536
+\item Ejecute el modelo usando mpirun instalado en el paso 3:  \textbackslash{} opt \textbackslash{} mpich3 \textbackslash{} bin \textbackslash{} mpirun -np 4\textbackslash{} .brams-5.2.5
+\end{itemize}
+
+Notas:
+\begin{enumerate}[1.]
+\item -np = los números de núcleos que usará. 
+Si no lo sabe, intente con el comando: \$ lscpu (consulte la información sobre CPU (s))
+\item ./brams-5.2.5 - El código ejecutable de BRAM. Por favor, apunta al directorio de código.
+\item Cuando comience el modelo, se imprimirán muchos registros en su pantalla. Preste atención a los errores que se imprimirán durante la ejecución.
+\item Si recibió un error y necesita ayuda, envíe un correo electrónico a brams\_ help@cptec.inpe.br e informe el error. Por favor, adjunte el registro impreso en la pantalla.
+
+\end{enumerate}
+\section{Visualiza los resultados con grados}
+BRAMS, de forma predeterminada, escribe la salida en el subdirectorio dataout / POSPROCESS. Más tarde puede establecer otros directorios y funciones en el archivo de lista de nombres (usuarios expertos). El formato de la salida en POS está en el software GrADS (COLA / IGES). Debe instalar GrADS en su computadora.
+
+Obtenga el software de OpenGrads e instálelo en su computadora o, si usa UBUNTU, puede obtener graduados usando: \~   \textbackslash{} sudo apt-get install grads
+
+Después de la instalación, por favor:
+
+\begin{enumerate}
+\item Goto pos directory: \~ \textbackslash{} \ datac cd / POSPROCESS
+\item Ejecute el software grads: \~ \textbackslash{} grads -l
+\item Cuando aparezca el mensaje Grads en el terminal (ga-), puede elegir uno de los archivos de salida verifíquelos enumerando: ga-! Ls -latr * .ctl
+\item Elija uno y ábralo: ga- abra METEO - ONLY -    A - 2015 - 08 - 27 - 030000 - g1.ctl (el nombre es solo un ejemplo) después de que el archivo esté abierto.Verá información sobre el archivo, LON, LAT, LEV, etc.
+\item enumera todas las variables disponibles en salida: archivo ga- q
+\item Elija uno de ellos y proceda con el gráfico: ga- d tempc (en este ejemplo, gráfico de tempc - temperatura)
+\end{enumerate}
+
+\end{document}
